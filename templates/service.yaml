@@ -1,13 +1,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: {{ .Values.namespace }}
   name: {{ include "fullname" . }}
+  namespace: {{ .Values.namespace }}
 spec:
+  # https://kubernetes.io/docs/tutorials/services/source-ip/#source-ip-for-services-with-type-loadbalancer
+  # type: LoadBalancer
   type: ClusterIP
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
   ports:
     - protocol: TCP
-      port: 8088
-      targetPort: 80
+      port: 80
+      targetPort: helloworld-port
+
+  # http://176.124.208.135:5432/
+  # http://88.210.12.58:5432/ 
+
+#  forward port from local (9090) to pod (8080)
+# kubectl port-forward <pod> 9090:8080 -n infra

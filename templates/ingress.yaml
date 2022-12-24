@@ -6,9 +6,8 @@ metadata:
 spec:
   routes:
     - kind: Rule
-      match: Host(`{{ .Values.subUrl }}.staging.toxics.space`)
+      match: Host(`infra-test.toxics.space`)
       priority: 1
       services:
       - name: {{ include "fullname" . }}
-        port: 8088
-
+        port: 80

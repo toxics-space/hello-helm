@@ -1,44 +1,31 @@
+# docker pull gcr.io/google-samples/node-hello:1.0
+# docker tag gcr.io/google-samples/node-hello:1.0 reg.toxics.space/hello
+# docker image push reg.toxics.space/hello
+# curl http://reg.toxics.space/v2/_catalog
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: {{ .Values.namespace }}
   name: {{ include "fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "selectorLabels" . | nindent 4 }}
 spec:
+  replicas: 1
   selector:
     matchLabels:
       {{- include "selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      # annotations:
-      #   prometheus.io/port: '9113'
-      #   prometheus.io/scrape: 'true'
       labels:
         {{- include "selectorLabels" . | nindent 8 }}
     spec:
       imagePullSecrets:
       - name: secret-dockercfg
-
       containers:
-      - name: landing
-        image: ghcr.io/toxics-space/landing:{{ .Values.version }}
+      - image: gcr.io/google-samples/node-hello:{{ .Values.version }}
         imagePullPolicy: Always
+        name: hello-world
         ports:
-        - name: landing-port
-          containerPort: 80
-        env:
-        - name: SERVER_NAME
-          value: landing_staging
-      
-      - name: nginx-exporter
-        image: 'nginx/nginx-prometheus-exporter:0.11.0'
-        args:
-          - '-nginx.scrape-uri=http://localhost:8080/metrics'
-        resources:
-          limits:
-            memory: 128Mi
-            cpu: 500m
-        ports:
-        - name: monitoring
-          containerPort: 9113
+        - name: helloworld-port
+          containerPort: 8080
